@@ -695,6 +695,9 @@ the path set:
       ]
     <BLANKLINE>
     _interactive = True
+    import os.path
+    sys.executable = os.path.realpath(sys.argv[0])
+    del os
     if len(sys.argv) > 1:
         _options, _args = __import__("getopt").getopt(sys.argv[1:], 'ic:m:')
         _interactive = False
@@ -963,6 +966,9 @@ We specified an interpreter and its paths are adjusted too:
     <BLANKLINE>
     <BLANKLINE>
     _interactive = True
+    import os.path
+    sys.executable = os.path.realpath(sys.argv[0])
+    del os
     if len(sys.argv) > 1:
         _options, _args = __import__("getopt").getopt(sys.argv[1:], 'ic:m:')
         _interactive = False

@@ -224,6 +224,16 @@ the bits if the path added to reflect the eggs:
     demo-0.2-py2.4.egg
     demoneeded-1.1-py2.4.egg...
 
+The interpreter sets sys.executable properly, so that it can re-execute itself:
+
+    >>> print_(system(join(sample_buildout, 'bin', 'py-demo'),
+    ... """import sys
+    ... _ = sys.stdout.write(sys.executable+'\\n')
+    ... """).replace('>>> ', '').replace('... ', ''), end='')
+    ... # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+    /sample-buildout/bin/py-demo
+    ...
+
 Egg updating
 ------------
 

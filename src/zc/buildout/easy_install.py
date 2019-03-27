@@ -1478,6 +1478,9 @@ sys.path[0:0] = [
 %(initialization)s
 
 _interactive = True
+import os.path
+sys.executable = os.path.realpath(sys.argv[0])
+del os
 if len(sys.argv) > 1:
     _options, _args = __import__("getopt").getopt(sys.argv[1:], 'ic:m:')
     _interactive = False
