@@ -2,6 +2,8 @@
 Buildout
 ********
 
+edit
+
 .. image:: https://secure.travis-ci.org/buildout/buildout.png?branch=master
    :width: 82px
    :height: 13px
