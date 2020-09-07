@@ -2246,6 +2246,60 @@ def dealing_with_extremely_insane_dependencies():
     Error: Couldn't find a distribution for 'pack5'.
     """
 
+def test_recipe_options_are_escaped():
+    """
+    >>> mkdir(sample_buildout, 'recipes')
+    >>> write(sample_buildout, 'recipes', 'test.py',
+    ... '''
+    ... class Recipe:
+    ...
+    ...     def __init__(self, buildout, name, options):
+    ...         options['option'] = '${buildout_syntax_should_be_escaped}'
+    ...         print ("Option value: %s" % options['option'])
+    ...
+    ...     def install(self):
+    ...         return ()
+    ...
+    ...     update = install
+    ... ''')
+
+
+    >>> write(sample_buildout, 'recipes', 'setup.py',
+    ... '''
+    ... from setuptools import setup
+    ... setup(
+    ...     name = "recipes",
+    ...     entry_points = {'zc.buildout': ['test = test:Recipe']},
+    ...     )
+    ... ''')
+
+    >>> write(sample_buildout, 'buildout.cfg',
+    ... '''
+    ... [buildout]
+    ... develop = recipes
+    ... parts = a
+    ... [a]
+    ... recipe = recipes:test
+    ... ''')
+
+    >>> os.chdir(sample_buildout)
+    >>> buildout = os.path.join(sample_buildout, 'bin', 'buildout')
+
+    >>> print_(system(buildout), end='')
+    Develop: '/sample-buildout/recipes'
+    Option value: ${buildout_syntax_should_be_escaped}
+    Installing a.
+
+    >>> cat('.installed.cfg') # doctest: +ELLIPSIS
+    [buildout]
+    ...
+    [a]
+    __buildout_installed__ = 
+    __buildout_signature__ = recipes-...
+    option = $${buildout_syntax_should_be_escaped}
+    recipe = recipes:test
+    """
+
 def read_find_links_to_load_extensions():
     r"""
 We'll create a wacky buildout extension that just announces itself when used:

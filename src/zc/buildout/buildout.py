@@ -1583,7 +1583,7 @@ class Options(DictMixin):
     def __setitem__(self, option, value):
         if not isinstance(value, str):
             raise TypeError('Option values must be strings', value)
-        self._data[option] = value
+        self._data[option] = value.replace('${', '$${')
 
     def __delitem__(self, key):
         if key in self._raw:
