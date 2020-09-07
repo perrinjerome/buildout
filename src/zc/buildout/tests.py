@@ -2300,6 +2300,53 @@ def test_recipe_options_are_escaped():
     recipe = recipes:test
     """
 
+def test_recipe_invalid_options_are_rejected():
+    r"""
+    >>> mkdir(sample_buildout, 'recipes')
+    >>> write(sample_buildout, 'recipes', 'test.py',
+    ... '''
+    ... class Recipe:
+    ...
+    ...     def __init__(self, buildout, name, options):
+    ...         options['[section]\\noption'] = 'invalid'
+    ...
+    ...     def install(self):
+    ...         return ()
+    ...
+    ...     update = install
+    ... ''')
+
+
+    >>> write(sample_buildout, 'recipes', 'setup.py',
+    ... '''
+    ... from setuptools import setup
+    ... setup(
+    ...     name = "recipes",
+    ...     entry_points = {'zc.buildout': ['test = test:Recipe']},
+    ...     )
+    ... ''')
+
+    >>> write(sample_buildout, 'buildout.cfg',
+    ... '''
+    ... [buildout]
+    ... develop = recipes
+    ... parts = a
+    ... [a]
+    ... recipe = recipes:test
+    ... ''')
+
+    >>> os.chdir(sample_buildout)
+    >>> buildout = os.path.join(sample_buildout, 'bin', 'buildout')
+
+    >>> print_(system(buildout), end='')
+    Develop: '/sample-buildout/recipes'
+    While:
+      Installing.
+      Getting section a.
+      Initializing section a.
+    Error: Invalid option name '[section]\noption'
+    """
+
 def read_find_links_to_load_extensions():
     r"""
 We'll create a wacky buildout extension that just announces itself when used:

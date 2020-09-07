@@ -1581,6 +1581,8 @@ class Options(DictMixin):
         return v
 
     def __setitem__(self, option, value):
+        if not re.match(r'^[^\s{}[\]=:]+$', option):
+            raise zc.buildout.UserError("Invalid option name %r" % (option, ))
         if not isinstance(value, str):
             raise TypeError('Option values must be strings', value)
         self._data[option] = value.replace('${', '$${')
